@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Robot Quiz Moderator</title>
+
+<style>
+
+:root {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --text-main: #f8fafc;
+    --accent: #38bdf8;
+    --error: #e74c3c;
+}
+
+body {
+
+    font-family: 'Segoe UI', sans-serif;
+
+    background-color: var(--bg-color);
+
+    color: var(--text-main);
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    min-height: 100vh;
+
+    margin: 0;
+
+    padding: 20px;
+}
+
+.project-header {
+
+    text-align: center;
+
+    max-width: 800px;
+
+    margin-bottom: 2rem;
+}
+
+.project-header h1 {
+
+    font-size: 1.4rem;
+
+    color: var(--accent);
+
+    line-height: 1.4;
+}
+
+.quiz-container {
+
+    background: var(--card-bg);
+
+    padding: 2.5rem;
+
+    border-radius: 1.5rem;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+
+    width: 100%;
+
+    max-width: 500px;
+
+    text-align: center;
+
+    border: 1px solid #334155;
+}
+
+input,
+select {
+
+    box-sizing: border-box;
+
+    width: 100%;
+
+    padding: 12px;
+
+    margin: 8px 0;
+
+    border-radius: 6px;
+
+    border: 1px solid #475569;
+
+    background: #0f172a;
+
+    color: white;
+}
+
+button {
+
+    cursor: pointer;
+}
+
+.start-btn {
+
+    background: var(--accent);
+
+    color: #0f172a;
+
+    padding: 12px 25px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    font-weight: bold;
+
+    margin-top: 15px;
+}
+
+#robot-face {
+
+    width: 80px;
+
+    height: 80px;
+
+    background: #0f172a;
+
+    border-radius: 20px;
+
+    margin: 0 auto 1rem;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    border: 4px solid var(--accent);
+
+    transition: 0.3s;
+}
+
+#robot-eye {
+
+    width: 40px;
+
+    height: 10px;
+
+    background: var(--accent);
+
+    border-radius: 5px;
+
+    box-shadow: 0 0 15px var(--accent);
+}
+
+.question-text {
+
+    font-size: 1.2rem;
+
+    margin-bottom: 1.5rem;
+
+    font-weight: 600;
+
+    min-height: 60px;
+}
+
+#record-btn {
+
+    width: 80px;
+
+    height: 80px;
+
+    border-radius: 50%;
+
+    background: #334155;
+
+    border: 3px solid var(--accent);
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+    color: white;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    margin: 0 auto;
+}
+
+#record-btn:disabled {
+
+    opacity: 0.3;
+
+    cursor: not-allowed;
+
+    border-color: #475569;
+}
+
+.listening {
+
+    border-color: var(--error) !important;
+
+    box-shadow: 0 0 20px var(--error);
+
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.next-btn {
+
+    background: var(--accent);
+
+    color: #0f172a;
+
+    padding: 12px 25px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    font-weight: bold;
+
+    margin-top: 20px;
+
+    display: none;
+}
+
+.dashboard-btn {
+
+    background: transparent;
+
+    color: var(--accent);
+
+    padding: 10px 20px;
+
+    border: 1px solid var(--accent);
+
+    border-radius: 6px;
+
+    margin-top: 15px;
+}
+
+.stats {
+
+    font-size: 0.9rem;
+
+    color: #94a3b8;
+
+    margin-top: 1.5rem;
+
+    border-top: 1px solid #334155;
+
+    padding-top: 1rem;
+}
+
+.hidden {
+
+    display: none;
+}
+
+#start-screen {
+
+    margin-bottom: 20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="project-header">
+
+<h1>
+Technology Acceptance in University Robot-Supported
+Quiz-Based Learning:
+<br>
+
+<span style="color:#94a3b8;font-size:1.1rem;">
+
+VerbalOnly Versus Multimodal Feedback With Sound Input
+
+</span>
+
+</h1>
+
+</div>
+
+
+<div class="quiz-container">
+
+
+<!-- START SCREEN -->
+
+<div id="start-screen">
+
+<h2>Robot Quiz Study</h2>
+
+<p style="color:#94a3b8;">
+Enter your name to begin the study.
+</p>
+
+<input
+    type="text"
+    id="student-name"
+    placeholder="Enter student name"
+>
+
+<select id="start-modality">
+
+<option value="multimodal">
+Multimodal Feedback
+</option>
+
+<option value="verbal">
+Verbal Only
+</option>
+
+</select>
+
+<button
+    class="start-btn"
+    onclick="startQuiz()"
+>
+Start Quiz
+</button>
+
+<br>
+
+<button
+    class="dashboard-btn"
+    onclick="window.location.href='/dashboard'"
+>
+View Performance Dashboard
+</button>
+
+</div>
+
+
+<!-- QUIZ -->
+
+<div id="quiz-screen" class="hidden">
+
+
+<div id="robot-face">
+
+<div id="robot-eye"></div>
+
+</div>
+
+
+<p id="robot-speech">
+"Welcome!"
+</p>
+
+
+<div id="game-ui">
+
+<div
+    class="question-text"
+    id="q-text"
+>
+Loading...
+</div>
+
+
+<div id="voice-controls">
+
+<div
+    id="mic-status"
+    style="
+        margin-bottom:10px;
+        font-size:0.8rem;
+        color:#38bdf8;
+    "
+>
+Robot is preparing...
+</div>
+
+
+<button
+    id="record-btn"
+    onclick="startListening()"
+    disabled
+>
+
+<span
+    id="mic-icon"
+    style="font-size:2rem;"
+>
+🎤
+</span>
+
+</button>
+
+
+<p
+    id="interim-text"
+    style="
+        color:#38bdf8;
+        min-height:24px;
+        margin-top:10px;
+        font-style:italic;
+        font-size:0.9rem;
+    "
+></p>
+
+</div>
+
+
+<select id="modality">
+
+<option value="multimodal">
+Multimodal Feedback
+</option>
+
+<option value="verbal">
+Verbal Only
+</option>
+
+</select>
+
+
+<button
+    id="next-btn"
+    class="next-btn"
+    onclick="nextQuestion()"
+>
+Next Question →
+</button>
+
+
+<div class="stats">
+
+Progress:
+<span id="q-num">1</span>/5
+
+|
+
+Score:
+<span id="score">0</span>
+
+</div>
+
+</div>
+
+
+<div id="final-ui" class="hidden">
+
+<h2 style="color:var(--accent);">
+Quiz Complete!
+</h2>
+
+<div
+    style="font-size:3rem;margin:1rem 0;"
+    id="final-score"
+>
+0 / 5
+</div>
+
+
+<p id="student-result"></p>
+
+
+<button
+    class="start-btn"
+    onclick="location.reload()"
+>
+Restart Study
+</button>
+
+
+<br>
+
+
+<button
+    class="dashboard-btn"
+    onclick="window.location.href='/dashboard'"
+>
+View Performance Dashboard
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+let currentIdx = 0;
+
+let score = 0;
+
+const totalQuestions = 5;
+
+let sessionId = null;
+
+let answerSubmitted = false;
+
+
+// --------------------------------------------------
+// SPEECH RECOGNITION
+// --------------------------------------------------
+
+const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+
+if (!SpeechRecognition) {
+
+    alert(
+        "Web Speech API is not supported. Please use Google Chrome."
+    );
+
+}
+
+
+const recognition = new SpeechRecognition();
+
+recognition.lang = 'en-IN';
+
+recognition.continuous = false;
+
+recognition.interimResults = false;
+
+recognition.maxAlternatives = 1;
+
+
+// --------------------------------------------------
+// START QUIZ
+// --------------------------------------------------
+
+async function startQuiz() {
+
+    const name =
+        document
+        .getElementById('student-name')
+        .value
+        .trim();
+
+    const modality =
+        document
+        .getElementById('start-modality')
+        .value;
+
+
+    if (!name) {
+
+        alert("Please enter the student name.");
+
+        return;
+    }
+
+
+    const response = await fetch(
+        '/start_session',
+        {
+            method: 'POST',
+
+            headers: {
+                'Content-Type':
+                    'application/json'
+            },
+
+            body: JSON.stringify({
+                student_name: name,
+                modality: modality
+            })
+        }
+    );
+
+
+    const data = await response.json();
+
+
+    if (data.error) {
+
+        alert(data.error);
+
+        return;
+    }
+
+
+    sessionId = data.session_id;
+
+
+    document
+        .getElementById('start-screen')
+        .classList.add('hidden');
+
+
+    document
+        .getElementById('quiz-screen')
+        .classList.remove('hidden');
+
+
+    document
+        .getElementById('modality')
+        .value = modality;
+
+
+    document
+        .getElementById('robot-speech')
+        .innerText =
+        `"Welcome ${name}! Let's begin."`;
+
+
+    speakText(
+        `Welcome ${name}! Let's begin.`,
+        () => {
+            fetchQuestion();
+        }
+    );
+}
+
+
+// --------------------------------------------------
+// FETCH QUESTION
+// --------------------------------------------------
+
+async function fetchQuestion() {
+
+    answerSubmitted = false;
+
+    const res =
+        await fetch(
+            `/get_question/${currentIdx}`
+        );
+
+    const data =
+        await res.json();
+
+
+    if (data.end) {
+
+        await finishQuiz();
+
+        return;
+    }
+
+
+    document
+        .getElementById('q-text')
+        .innerText = data.q;
+
+
+    document
+        .getElementById('q-num')
+        .innerText =
+        currentIdx + 1;
+
+
+    document
+        .getElementById('record-btn')
+        .disabled = true;
+
+
+    document
+        .getElementById('next-btn')
+        .style.display = 'none';
+
+
+    document
+        .getElementById('mic-status')
+        .innerText =
+        "Robot is speaking...";
+
+
+    document
+        .getElementById('interim-text')
+        .innerText = "";
+
+
+    speakText(
+        data.q,
+        () => {
+
+            document
+                .getElementById('record-btn')
+                .disabled = false;
+
+
+            document
+                .getElementById('mic-status')
+                .innerText =
+                "Click mic and speak your answer";
+        }
+    );
+}
+
+
+// --------------------------------------------------
+// START LISTENING
+// --------------------------------------------------
+
+function startListening() {
+
+    if (answerSubmitted) {
+        return;
+    }
+
+    try {
+
+        recognition.start();
+
+    }
+    catch (e) {
+
+        console.log(
+            "Recognition already active."
+        );
+
+    }
+}
+
+
+// --------------------------------------------------
+// RECOGNITION EVENTS
+// --------------------------------------------------
+
+recognition.onstart = () => {
+
+    document
+        .getElementById('record-btn')
+        .classList.add('listening');
+
+
+    document
+        .getElementById('mic-icon')
+        .innerText = "🔴";
+
+
+    document
+        .getElementById('mic-status')
+        .innerText =
+        "Listening...";
+};
+
+
+recognition.onresult = (event) => {
+
+    const transcript =
+        event
+        .results[0][0]
+        .transcript;
+
+
+    document
+        .getElementById('interim-text')
+        .innerText =
+        `Heard: "${transcript}"`;
+
+
+    handleVoiceSubmission(transcript);
+};
+
+
+recognition.onerror = (event) => {
+
+    document
+        .getElementById('record-btn')
+        .classList.remove('listening');
+
+
+    document
+        .getElementById('mic-icon')
+        .innerText = "🎤";
+
+
+    document
+        .getElementById('mic-status')
+        .innerText =
+        "Error: " + event.error;
+
+
+    console.error(
+        "Speech Error:",
+        event.error
+    );
+};
+
+
+recognition.onend = () => {
+
+    document
+        .getElementById('record-btn')
+        .classList.remove('listening');
+
+
+    document
+        .getElementById('mic-icon')
+        .innerText = "🎤";
+};
+
+
+// --------------------------------------------------
+// SUBMIT ANSWER
+// --------------------------------------------------
+
+async function handleVoiceSubmission(
+    voiceText
+) {
+
+    if (answerSubmitted) {
+        return;
+    }
+
+
+    answerSubmitted = true;
+
+
+    document
+        .getElementById('record-btn')
+        .disabled = true;
+
+
+    document
+        .getElementById('mic-status')
+        .innerText =
+        "Processing your answer...";
+
+
+    const modality =
+        document
+        .getElementById('modality')
+        .value;
+
+
+    const res =
+        await fetch(
+            '/verify_voice_answer',
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type':
+                        'application/json'
+                },
+
+                body: JSON.stringify({
+
+                    q_id: currentIdx,
+
+                    answer: voiceText,
+
+                    modality: modality,
+
+                    session_id: sessionId
+                })
+            }
+        );
+
+
+    const result =
+        await res.json();
+
+
+    if (result.correct) {
+
+        score++;
+
+        document
+            .getElementById('score')
+            .innerText = score;
+    }
+
+
+    updateRobot(result);
+
+
+    // IMPORTANT:
+    // Do NOT automatically move to next question.
+
+    document
+        .getElementById('next-btn')
+        .style.display = 'inline-block';
+
+
+    document
+        .getElementById('mic-status')
+        .innerText =
+        "Answer recorded. Click Next Question when ready.";
+}
+
+
+// --------------------------------------------------
+// NEXT QUESTION
+// --------------------------------------------------
+
+function nextQuestion() {
+
+    currentIdx++;
+
+    if (currentIdx >= totalQuestions) {
+
+        finishQuiz();
+
+        return;
+    }
+
+
+    fetchQuestion();
+}
+
+
+// --------------------------------------------------
+// ROBOT FEEDBACK
+// --------------------------------------------------
+
+function updateRobot(data) {
+
+    const eye =
+        document
+        .getElementById('robot-eye');
+
+
+    const speech =
+        document
+        .getElementById('robot-speech');
+
+
+    speech.innerText =
+        `"${data.speech}"`;
+
+
+    eye.style.backgroundColor =
+        data.color;
+
+
+    eye.style.boxShadow =
+        `0 0 20px ${data.color}`;
+
+
+    speakText(data.speech);
+}
+
+
+// --------------------------------------------------
+// TEXT TO SPEECH
+// --------------------------------------------------
+
+function speakText(text, callback) {
+
+    window.speechSynthesis.cancel();
+
+
+    const msg =
+        new SpeechSynthesisUtterance(text);
+
+
+    msg.volume = 1;
+
+    msg.rate = 1;
+
+    msg.pitch = 1;
+
+
+    const voices =
+        speechSynthesis.getVoices();
+
+
+    if (voices.length > 0) {
+
+        msg.voice =
+            voices.find(
+                v => v.lang.includes('en')
+            ) || voices[0];
+    }
+
+
+    if (callback) {
+
+        msg.onend = callback;
+
+    }
+
+
+    speechSynthesis.speak(msg);
+}
+
+
+// --------------------------------------------------
+// FINISH QUIZ
+// --------------------------------------------------
+
+async function finishQuiz() {
+
+    const response =
+        await fetch(
+            '/complete_session',
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type':
+                        'application/json'
+                },
+
+                body: JSON.stringify({
+                    session_id: sessionId
+                })
+            }
+        );
+
+
+    const result =
+        await response.json();
+
+
+    document
+        .getElementById('game-ui')
+        .classList.add('hidden');
+
+
+    document
+        .getElementById('final-ui')
+        .classList.remove('hidden');
+
+
+    document
+        .getElementById('final-score')
+        .innerText =
+        `${result.score} / ${result.total}`;
+
+
+    document
+        .getElementById('student-result')
+        .innerText =
+        "Your performance has been saved.";
+}
+
+</script>
+
+</body>
+
+</html>

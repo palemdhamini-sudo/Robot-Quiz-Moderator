@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Robot Quiz Performance Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    font-family: 'Segoe UI', sans-serif;
+
+    background: #0f172a;
+
+    color: #f8fafc;
+
+}
+
+.header {
+
+    padding: 25px;
+
+    text-align: center;
+
+    background: #1e293b;
+
+    border-bottom: 1px solid #334155;
+}
+
+.header h1 {
+
+    color: #38bdf8;
+
+    margin: 0;
+}
+
+.header p {
+
+    color: #94a3b8;
+}
+
+.container {
+
+    max-width: 1200px;
+
+    margin: auto;
+
+    padding: 30px;
+}
+
+.back-btn {
+
+    background: #38bdf8;
+
+    border: none;
+
+    padding: 10px 20px;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    margin-bottom: 25px;
+}
+
+.cards {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(200px, 1fr));
+
+    gap: 20px;
+
+    margin-bottom: 30px;
+}
+
+.card {
+
+    background: #1e293b;
+
+    border: 1px solid #334155;
+
+    border-radius: 12px;
+
+    padding: 25px;
+
+    text-align: center;
+}
+
+.card h3 {
+
+    color: #94a3b8;
+
+    font-size: 15px;
+}
+
+.card .number {
+
+    font-size: 2.2rem;
+
+    color: #38bdf8;
+
+    font-weight: bold;
+}
+
+.charts {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(350px, 1fr));
+
+    gap: 25px;
+
+    margin-bottom: 30px;
+}
+
+.chart-card {
+
+    background: #1e293b;
+
+    border: 1px solid #334155;
+
+    border-radius: 12px;
+
+    padding: 20px;
+
+}
+
+.chart-card h2 {
+
+    font-size: 18px;
+
+    color: #38bdf8;
+
+    margin-top: 0;
+}
+
+.table-card {
+
+    background: #1e293b;
+
+    border: 1px solid #334155;
+
+    border-radius: 12px;
+
+    padding: 20px;
+
+    overflow-x: auto;
+}
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+th,
+td {
+
+    padding: 12px;
+
+    border-bottom: 1px solid #334155;
+
+    text-align: left;
+}
+
+th {
+
+    color: #38bdf8;
+}
+
+td {
+
+    color: #cbd5e1;
+}
+
+.correct {
+
+    color: #2ecc71;
+}
+
+.incorrect {
+
+    color: #e74c3c;
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<div class="header">
+
+<h1>
+🤖 Robot Quiz Performance Dashboard
+</h1>
+
+<p>
+Student Performance Analytics
+</p>
+
+</div>
+
+
+<div class="container">
+
+
+<button
+    class="back-btn"
+    onclick="window.location.href='/'"
+>
+← Back to Quiz
+</button>
+
+
+<!-- STAT CARDS -->
+
+<div class="cards">
+
+
+<div class="card">
+
+<h3>Total Quiz Sessions</h3>
+
+<div
+    class="number"
+    id="total-sessions"
+>
+0
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>Total Answers</h3>
+
+<div
+    class="number"
+    id="total-answers"
+>
+0
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>Correct Answers</h3>
+
+<div
+    class="number"
+    id="correct-answers"
+>
+0
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>Overall Accuracy</h3>
+
+<div
+    class="number"
+    id="accuracy"
+>
+0%
+</div>
+
+</div>
+
+</div>
+
+
+<!-- CHARTS -->
+
+<div class="charts">
+
+
+<div class="chart-card">
+
+<h2>
+Question-wise Performance
+</h2>
+
+<canvas id="questionChart"></canvas>
+
+</div>
+
+
+<div class="chart-card">
+
+<h2>
+Correct vs Incorrect
+</h2>
+
+<canvas id="accuracyChart"></canvas>
+
+</div>
+
+
+<div class="chart-card">
+
+<h2>
+Feedback Modality
+</h2>
+
+<canvas id="modalityChart"></canvas>
+
+</div>
+
+
+<div class="chart-card">
+
+<h2>
+Detected Student Emotion
+</h2>
+
+<canvas id="emotionChart"></canvas>
+
+</div>
+
+</div>
+
+
+<!-- SESSION TABLE -->
+
+<div class="table-card">
+
+<h2 style="color:#38bdf8;">
+Recent Quiz Sessions
+</h2>
+
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Student</th>
+
+<th>Date</th>
+
+<th>Score</th>
+
+<th>Accuracy</th>
+
+<th>Modality</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="session-table">
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<br>
+
+
+<!-- QUESTION TABLE -->
+
+<div class="table-card">
+
+<h2 style="color:#38bdf8;">
+Question-wise Analysis
+</h2>
+
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Question</th>
+
+<th>Attempts</th>
+
+<th>Correct</th>
+
+<th>Accuracy</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="question-table">
+
+</tbody>
+
+</table>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+let questionChart;
+
+let accuracyChart;
+
+let modalityChart;
+
+let emotionChart;
+
+
+// --------------------------------------------------
+// LOAD DASHBOARD
+// --------------------------------------------------
+
+async function loadDashboard() {
+
+    const response =
+        await fetch(
+            '/api/dashboard'
+        );
+
+
+    const data =
+        await response.json();
+
+
+    // ------------------------------------------------
+    // OVERALL
+    // ------------------------------------------------
+
+    document
+        .getElementById('total-sessions')
+        .innerText =
+        data.overall.total_sessions;
+
+
+    document
+        .getElementById('total-answers')
+        .innerText =
+        data.overall.total_answers;
+
+
+    document
+        .getElementById('correct-answers')
+        .innerText =
+        data.overall.correct_answers;
+
+
+    document
+        .getElementById('accuracy')
+        .innerText =
+        data.overall.accuracy + "%";
+
+
+    // ------------------------------------------------
+    // QUESTION CHART
+    // ------------------------------------------------
+
+    const questionLabels =
+        data.question_stats.map(
+            q => `Q${q.question_id + 1}`
+        );
+
+
+    const questionAccuracy =
+        data.question_stats.map(
+            q =>
+                q.attempts > 0
+                ? Math.round(
+                    (q.correct / q.attempts) * 100
+                  )
+                : 0
+        );
+
+
+    if (questionChart) {
+        questionChart.destroy();
+    }
+
+
+    questionChart =
+        new Chart(
+            document
+            .getElementById('questionChart'),
+            {
+                type: 'bar',
+
+                data: {
+
+                    labels:
+                        questionLabels,
+
+                    datasets: [{
+                        label:
+                            'Accuracy %',
+
+                        data:
+                            questionAccuracy
+                    }]
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            max: 100
+                        }
+                    }
+                }
+            }
+        );
+
+
+    // ------------------------------------------------
+    // ACCURACY CHART
+    // ------------------------------------------------
+
+    if (accuracyChart) {
+        accuracyChart.destroy();
+    }
+
+
+    accuracyChart =
+        new Chart(
+            document
+            .getElementById('accuracyChart'),
+            {
+                type: 'doughnut',
+
+                data: {
+
+                    labels: [
+                        'Correct',
+                        'Incorrect'
+                    ],
+
+                    datasets: [{
+
+                        data: [
+                            data.overall.correct_answers,
+                            data.overall.incorrect_answers
+                        ]
+
+                    }]
+                }
+            }
+        );
+
+
+    // ------------------------------------------------
+    // MODALITY CHART
+    // ------------------------------------------------
+
+    const modalityLabels =
+        data.modality_stats.map(
+            m => m.modality
+        );
+
+
+    const modalityAttempts =
+        data.modality_stats.map(
+            m => m.attempts
+        );
+
+
+    if (modalityChart) {
+        modalityChart.destroy();
+    }
+
+
+    modalityChart =
+        new Chart(
+            document
+            .getElementById('modalityChart'),
+            {
+                type: 'bar',
+
+                data: {
+
+                    labels:
+                        modalityLabels,
+
+                    datasets: [{
+
+                        label:
+                            'Answers',
+
+                        data:
+                            modalityAttempts
+
+                    }]
+                },
+
+                options: {
+
+                    responsive: true
+                }
+            }
+        );
+
+
+    // ------------------------------------------------
+    // EMOTION CHART
+    // ------------------------------------------------
+
+    const emotionLabels =
+        data.emotion_stats.map(
+            e => e.emotion
+        );
+
+
+    const emotionCounts =
+        data.emotion_stats.map(
+            e => e.count
+        );
+
+
+    if (emotionChart) {
+        emotionChart.destroy();
+    }
+
+
+    emotionChart =
+        new Chart(
+            document
+            .getElementById('emotionChart'),
+            {
+                type: 'pie',
+
+                data: {
+
+                    labels:
+                        emotionLabels,
+
+                    datasets: [{
+
+                        data:
+                            emotionCounts
+
+                    }]
+                }
+            }
+        );
+
+
+    // ------------------------------------------------
+    // SESSION TABLE
+    // ------------------------------------------------
+
+    const sessionTable =
+        document
+        .getElementById('session-table');
+
+
+    sessionTable.innerHTML = "";
+
+
+    data.sessions.forEach(
+        session => {
+
+            const accuracy =
+                session.total_questions > 0
+                ? Math.round(
+                    (session.score /
+                     session.total_questions) * 100
+                  )
+                : 0;
+
+
+            const row =
+                document.createElement('tr');
+
+
+            row.innerHTML = `
+
+                <td>
+                    ${session.student_name}
+                </td>
+
+                <td>
+                    ${session.start_time}
+                </td>
+
+                <td>
+                    ${session.score}
+                    /
+                    ${session.total_questions}
+                </td>
+
+                <td>
+                    ${accuracy}%
+                </td>
+
+                <td>
+                    ${session.modality}
+                </td>
+
+            `;
+
+
+            sessionTable.appendChild(row);
+
+        }
+    );
+
+
+    // ------------------------------------------------
+    // QUESTION TABLE
+    // ------------------------------------------------
+
+    const questionTable =
+        document
+        .getElementById('question-table');
+
+
+    questionTable.innerHTML = "";
+
+
+    data.question_stats.forEach(
+        q => {
+
+            const accuracy =
+                q.attempts > 0
+                ? Math.round(
+                    (q.correct /
+                     q.attempts) * 100
+                  )
+                : 0;
+
+
+            const row =
+                document.createElement('tr');
+
+
+            row.innerHTML = `
+
+                <td>
+                    ${q.question}
+                </td>
+
+                <td>
+                    ${q.attempts}
+                </td>
+
+                <td>
+                    ${q.correct}
+                </td>
+
+                <td>
+                    ${accuracy}%
+                </td>
+
+            `;
+
+
+            questionTable.appendChild(row);
+
+        }
+    );
+
+}
+
+
+loadDashboard();
+
+</script>
+
+</body>
+
+</html>
